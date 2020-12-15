@@ -29,7 +29,7 @@ public class Role {
 	public Role(
 			@org.jetbrains.annotations.NotNull
 			@NotNull String name) {
-		this.name = name.toUpperCase();
+		this.setName(name);
 	}
 
 	public long getRoleid() {
@@ -45,7 +45,7 @@ public class Role {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.toUpperCase();
 	}
 
 	public Set<UserRoles> getUsers() {

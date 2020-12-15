@@ -1,21 +1,18 @@
 package com.lambdaschool.sampleemps;
 
 import com.github.javafaker.Faker;
-import com.lambdaschool.sampleemps.models.Email;
-import com.lambdaschool.sampleemps.models.Employee;
-import com.lambdaschool.sampleemps.models.EmployeeTitles;
-import com.lambdaschool.sampleemps.models.JobTitle;
+import com.lambdaschool.sampleemps.models.*;
 import com.lambdaschool.sampleemps.repositories.JobTitleRepository;
+import com.lambdaschool.sampleemps.repositories.RoleRepository;
+import com.lambdaschool.sampleemps.repositories.UserRepository;
 import com.lambdaschool.sampleemps.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+
 
 @Transactional
 @Component
@@ -28,7 +25,14 @@ public class SeedData
     @Autowired
     private JobTitleRepository jobTitlerepos;
 
-    private Random random = new Random();
+    private Random random = new Random(); // already in SeedData
+
+    @Autowired
+    private UserRepository userrepos;
+
+    @Autowired
+    private RoleRepository rolerepos;
+
 
     @Override
     public void run(String... args) throws
@@ -100,5 +104,36 @@ public class SeedData
                     .add(new EmployeeTitles(employee, jt1, "Stumps")); // just assigning them to the first job title
             employeeService.save(employee);
         }
+
+        // Adding SeedData for users
+        Role r1 = new Role("ADMIN");
+        Role r2 = new Role("USER");
+        r1 = rolerepos.save(r1);
+        r2 = rolerepos.save(r2);
+
+        // admin
+        ArrayList<UserRoles> admins = new ArrayList<>();
+        admins.add(new UserRoles(new User(), r1));
+        Set<UserRoles> adminsSet = new HashSet<>();
+        adminsSet.add(new UserRoles(new User(), r1));
+        User u1 = new User("barnbarn", "password", adminsSet);
+        userrepos.save(u1);
+
+        // we need to start a new list of roles for the new admin user. For each user, a new list of roles needs to be created
+        // even the roles are the same between the users. The list of UserRoles though is never the same!
+        admins = new ArrayList<>();
+        admins.add(new UserRoles(new User(), r1));
+        adminsSet = new HashSet<>();
+        adminsSet.add(new UserRoles(new User(), r1));
+        User u2 = new User("admin", "password", adminsSet);
+        userrepos.save(u2);
+
+        // users
+        ArrayList<UserRoles> users = new ArrayList<>();
+        users.add(new UserRoles(new User(), r2));
+        Set<UserRoles> usersSet = new HashSet<>();
+        usersSet.add(new UserRoles(new User(), r2));
+        User u3 = new User("cinnamon", "ILuvM4th!", usersSet);
+        userrepos.save(u3);
     }
 }

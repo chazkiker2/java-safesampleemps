@@ -12,10 +12,11 @@ import java.io.Serializable;
 @Table(name = "userroles")
 @IdClass(UserRolesId.class)
 public class UserRoles
+		extends Auditable
 		implements Serializable {
 
 	@Id
-	@OneToMany
+	@ManyToOne
 	@NotNull
 	@JoinColumn(name = "userid")
 	@JsonIgnoreProperties(value = "roles",
